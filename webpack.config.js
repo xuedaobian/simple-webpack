@@ -1,36 +1,58 @@
-const path = require('path')
-const HtmlWbpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const isDev = process.env.NODE_ENV === 'development';
-const config = require('./public/siteConfig.js')[isDev ? 'dev' : 'build'];
+const path = require('path');
+const toml = require('toml');
+const yaml = require('yamljs');
+const json5 = require('json5');
+
 module.exports = {
-  devtool: isDev ? 'eval-source-map' : 'source-map',
+  mode: 'development',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        use: ['babel-loader'],
-        exclude: /node_modules/ //排除 node_modules 目录
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(le|c)ss$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
-        exclude: /node_modules/
-      }
-    ]
-  },
-  plugins: [
-    new HtmlWbpackPlugin({
-      template: './public/index.html',
-      filename: 'index.html',
-      config: config.template
-      // hash: true
-    }),
-    //不需要传参数喔，它可以找到 outputPath
-    new CleanWebpackPlugin()
-  ],
-  devServer: {
-    port: '3000', //默认是8080
-    compress: true //是否启用 gzip 压缩
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.(csv|tsv)$/i,
+        use: ['csv-loader'],
+      },
+      {
+        test: /\.xml$/i,
+        use: ['xml-loader'],
+      },
+      {
+        test: /\.toml$/i,
+        type: 'json',
+        parser: {
+          parse: toml.parse,
+        },
+      },
+      {
+        test: /\.yaml$/i,
+        type: 'json',
+        parser: {
+          parse: yaml.parse,
+        },
+      },
+      {
+        test: /\.json5$/i,
+        type: 'json',
+        parser: {
+          parse: json5.parse,
+        },
+      },
+    ],
   }
-}
+};

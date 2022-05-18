@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'MDL';
+  src: url('./MDL.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hello {
+  color: red;
+  font-family: 'MDL';
+  background: url('./logo.jpg');
+}
